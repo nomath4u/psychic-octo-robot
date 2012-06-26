@@ -12,11 +12,12 @@
 void initialization();
 int generate_target();
 int retrieve_guess(int);
+void play_again(bool*);
+
 
 using namespace std;
 
 class Target{
-//    int val = generate_target();
     int val;
     
 public:
@@ -32,7 +33,7 @@ public:
     }
     
     int generate_target(){
-        srand( time(NULL) );
+        srand( (unsigned int)time(NULL) );
         int target = rand() % 101;
         return target;
     }
@@ -66,43 +67,43 @@ int main(int argc, const char * argv[])
     const int max_turns = 5;
     int turn_number;
     int guess;
-
+    bool keepPlaying = true;
     
-    //Retrieve guesses until all guesses are used and compare to target
-    for(turn_number = 1; turn_number <= max_turns; turn_number++)
-    {
-        guess = retrieve_guess(turn_number);
-        if(target.isSame(guess))
+    while(keepPlaying){
+    
+        //Retrieve guesses until all guesses are used and compare to target
+        for(turn_number = 1; turn_number <= max_turns; turn_number++)
         {
-            cout << "You win!" << endl;
-            break;
-        }
+            guess = retrieve_guess(turn_number);
+            if(target.isSame(guess))
+            {
+                cout << "You win!" << endl;
+                break;
+            }
         
-        else if(target.isHigher(guess))
-        {
-            cout << "Your guess is too high!" << endl;
-        }
+            else if(target.isHigher(guess))
+            {
+                cout << "Your guess is too high!" << endl;
+            }
         
-        else if (target.isLower(guess))
-        {
-            cout << "Your guess is too low!" << endl;
+            else if (target.isLower(guess))
+            {
+                cout << "Your guess is too low!" << endl;
+            }
+            
+            else
+            {
+                cout << "Error" << endl;
+            }
         }
-        else
-        {
-            cout << "Error" << endl;
-        }
+    
+    cout << "End Game" << endl;
+    play_again(&keepPlaying);
     }
-    cout << "End Game";
     return 0;
 }
 
 
-
-//int generate_target(){
-//    srand( time(NULL) );
-//    int target = rand() % 101;
-//    return target;
-//}
 
 
 int retrieve_guess(int turn_number){
@@ -113,6 +114,38 @@ int retrieve_guess(int turn_number){
     
 }
 
-bool compare(){
+void play_again(bool* keepPlaying)
+{
+    bool choiceFail = true;
+    char selection;
+    while(choiceFail)
+    {
+        cout << "Would you like to continue playing? (y/n)" << endl;
+        cin >> selection;
+        if(selection != 'Y' && selection != 'y' && selection != 'N' && selection != 'n')
+        {
+        cout << "Invalid selection" << endl;
+        }
+        
+        else
+        {
+            choiceFail = false;
+        }
+    }
+       
+    if(selection == 'Y' || selection == 'y')
+    {
+        *keepPlaying = true;
+    }
     
+    else if(selection == 'N' || selection == 'n')
+    {
+        *keepPlaying = false;
+    }
 }
+       
+       
+       
+       
+       
+       
