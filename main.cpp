@@ -67,7 +67,9 @@ int main(int argc, const char * argv[])
     // insert code here...
     
     //initialization
-    Target target;
+    
+    //Target target;             Target initialization was here
+    
     const int max_turns = 5;
     int turn_number;
     int guess;
@@ -76,6 +78,7 @@ int main(int argc, const char * argv[])
     while(keepPlaying){
     
         //Retrieve guesses until all guesses are used and compare to target
+        Target target;           //Target initialization moved inside of keep playing loop to get a new target every playthrough does old target get destroyed?
         for(turn_number = 1; turn_number <= max_turns; turn_number++)
         {
             guess = retrieve_guess(turn_number);
