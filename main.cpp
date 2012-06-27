@@ -12,7 +12,7 @@
 void initialization();
 int generate_target();
 int retrieve_guess(int);
-void play_again(bool*);
+bool play_again();
 
 
 using namespace std;
@@ -34,8 +34,12 @@ public:
     
     int generate_target(){
         srand( (unsigned int)time(NULL) );
-        int target = rand() % 101;
+        int target = (rand() % 101);
         return target;
+    }
+    
+    void display(){
+        cout << val;
     }
     
     bool isSame(int guess)
@@ -96,9 +100,10 @@ int main(int argc, const char * argv[])
                 cout << "Error" << endl;
             }
         }
-    
-    cout << "End Game" << endl;
-    play_again(&keepPlaying);
+    cout << "The number was ";
+    target.display();
+    cout << endl << "End Game" << endl;
+    keepPlaying = play_again();
     }
     return 0;
 }
@@ -114,10 +119,11 @@ int retrieve_guess(int turn_number){
     
 }
 
-void play_again(bool* keepPlaying)
+bool play_again()
 {
     bool choiceFail = true;
     char selection;
+    bool keepPlaying;
     while(choiceFail)
     {
         cout << "Would you like to continue playing? (y/n)" << endl;
@@ -135,13 +141,14 @@ void play_again(bool* keepPlaying)
        
     if(selection == 'Y' || selection == 'y')
     {
-        *keepPlaying = true;
+        keepPlaying = true;
     }
     
     else if(selection == 'N' || selection == 'n')
     {
-        *keepPlaying = false;
+        keepPlaying = false;
     }
+    return keepPlaying;
 }
        
        
