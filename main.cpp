@@ -66,7 +66,7 @@ public:
 
 class Guessing_game{
     const int max_turns = 5;
-    
+    const string rules_flag = ("-r");
     
 public:
     void play(){
@@ -105,6 +105,36 @@ public:
         cout << endl << "End Game" << endl;
         keepPlaying = play_again();
         }
+    }
+    
+    //Deal with commandline flags
+    void flags(string flag){
+        if (flag.compare(rules_flag) == 0){
+            string line;
+            ifstream rulesfile;
+            rulesfile.open("rules.txt");
+            if(rulesfile.is_open())
+            {
+                while(rulesfile.good())
+                {
+                    getline(rulesfile, line);
+                    cout << line << endl;
+                }
+                
+                rulesfile.close();
+            }
+            
+            else
+            {
+                cout << "Unable to open file" << endl;
+            }
+        }
+        
+        else {
+            cout << "Invalid flag" << endl;
+        }
+        
+        
     }
  
 private:
@@ -149,7 +179,8 @@ private:
         }
         return keepPlaying;
     }
-
+    
+    
 };
 
 
@@ -159,44 +190,24 @@ private:
 
 int main(int argc, const char * argv[])
 {
-    const string rules_flag = ("-r");
+    Guessing_game game;
+    
 
-    // insert code here...
     
     switch (argc) {
+          
+        //Regular game run
         case 1: {
             break;
         }
-            
-        case 2: {
-            string flag = argv[1];
-            if (flag.compare(rules_flag) == 0){
-                string line;
-                ifstream rulesfile;
-                rulesfile.open("rules.txt");
-                if(rulesfile.is_open())
-                {
-                    while(rulesfile.good())
-                    {
-                        getline(rulesfile, line);
-                        cout << line << endl;
-                    }
-                    
-                    rulesfile.close();
-                }
-                
-                else
-                {
-                    cout << "Unable to open file" << endl;
-                }
-            }
         
-            else {
-                cout << "Invalid flag" << endl;
-            }
+        // Decide which flag was given
+        case 2: {
+            game.flags(argv[1]);
             break;
         }
-            
+        
+        // Too many flags
         default:{
             cout << "Too many arguements" << endl;
         }
@@ -210,7 +221,7 @@ int main(int argc, const char * argv[])
         
     
 
-    Guessing_game game;
+    
     game.play();    //Start the game
     return 0;
 }
