@@ -98,6 +98,7 @@ public:
 class Guessing_game{
     const int max_turns = 5;
     const string rules_flag = ("-r");
+    const string statistics_flag = ("-s");
     
 public:
     void play(){
@@ -136,11 +137,26 @@ public:
         if (flag.compare(rules_flag) == 0){
             rulesRead();
         }
-                    
+        
+        else if (flag.compare(statistics_flag) == 0){
+            statisticsRead();
+        }
         else {
             cout << "Invalid flag" << endl;
         }
     }
+    
+    void statsCheck (){
+        ifstream statisticsfile;
+        statisticsfile.open("stats.txt");
+        if(statisticsfile.good()){
+        }
+        else{
+            generateStatsFile();
+            cout << "stats.txt generated" << endl;
+        }
+    }
+
  
     
     
@@ -209,7 +225,38 @@ private:
         }
 
     }
+    //Open and read the statistics file
+    void statisticsRead(){
+        string line;
+        ifstream statisticsfile;
+        statisticsfile.open("stats.txt");
+        if(statisticsfile.is_open())
+        {
+            while(statisticsfile.good())
+            {
+                getline(statisticsfile, line);
+                cout << line << endl;
+            }
+            
+            statisticsfile.close();
+        }
+        
+        else
+        {
+            cout << "Unable to find stats.txt. Generating new" << endl;
+            generateStatsFile();
+            
+        }
+    }
     
+    void generateStatsFile(){
+        ofstream statisticsfile;
+        statisticsfile.open("stats.txt");
+        statisticsfile << "Statistics:" <<endl << "Wins: " << endl << "Losses: " << endl << "Average turns per game: " << endl;
+        statisticsfile.close();
+    }
+    
+        
 };
 
 
@@ -241,6 +288,9 @@ int main(int argc, const char * argv[])
             cout << "Too many arguements" << endl;
         }
     }
+    
+    //Generate statistics file if it doens't exist
+    game.statsCheck();
             
     
     
