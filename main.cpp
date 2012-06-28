@@ -159,26 +159,54 @@ private:
 
 int main(int argc, const char * argv[])
 {
+    const string rules_flag = ("-r");
 
     // insert code here...
-    string line;
-    ifstream rulesfile;
-    rulesfile.open("rules.txt");
-        if(rulesfile.is_open())
-        {
-            while(rulesfile.good())
-            {
-                getline(rulesfile, line);
-                cout << line << endl;
+    
+    switch (argc) {
+        case 1: {
+            break;
+        }
+            
+        case 2: {
+            string flag = argv[1];
+            if (flag.compare(rules_flag) == 0){
+                string line;
+                ifstream rulesfile;
+                rulesfile.open("rules.txt");
+                if(rulesfile.is_open())
+                {
+                    while(rulesfile.good())
+                    {
+                        getline(rulesfile, line);
+                        cout << line << endl;
+                    }
+                    
+                    rulesfile.close();
+                }
+                
+                else
+                {
+                    cout << "Unable to open file" << endl;
+                }
             }
         
-            rulesfile.close();
+            else {
+                cout << "Invalid flag" << endl;
+            }
+            break;
         }
+            
+        default:{
+            cout << "Too many arguements" << endl;
+        }
+    }
+            
     
-        else
-        {
-            cout << "Unable to open file" << endl;
-        }
+    
+    
+    
+    
         
     
 
