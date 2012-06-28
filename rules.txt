@@ -1,0 +1,4 @@
+The Rules:
+The computer will generate an interger between 0 and 100.
+You will have 5 guesses to get the correct answer.
+	

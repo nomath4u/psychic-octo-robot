@@ -8,7 +8,8 @@
 
 #include <iostream>
 #include <cstdlib>
-
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -65,17 +66,17 @@ public:
 
 class Guessing_game{
     const int max_turns = 5;
-    int turn_number;
-    int guess;
-    bool keepPlaying = true;
+    
     
 public:
     void play(){
+        int guess;
+        bool keepPlaying = true;
         while(keepPlaying){
             
             //Retrieve guesses until all guesses are used and compare to target
-            Target target;           //Target initialization moved inside of keep playing loop to get a new target every playthrough does old target get destroyed?
-            for(turn_number = 1; turn_number <= max_turns; turn_number++)
+            Target target;           //Target initialization moved inside of keep playing loop to get a new target every playthrough
+            for(int turn_number = 1; turn_number <= max_turns; turn_number++)
             {
                 guess = retrieve_guess(turn_number);
                 if(target.isSame(guess))
@@ -109,7 +110,7 @@ public:
 private:
     int retrieve_guess(int turn_number){
         int guess;
-        cout << "Enter your guess. This is turn number " << turn_number<< endl;
+        cout << "Enter your guess. This is turn number " << turn_number << endl;
         cin >> guess;
         return guess;
         
@@ -160,6 +161,25 @@ int main(int argc, const char * argv[])
 {
 
     // insert code here...
+    string line;
+    ifstream rulesfile;
+    rulesfile.open("rules.txt");
+        if(rulesfile.is_open())
+        {
+            while(rulesfile.good())
+            {
+                getline(rulesfile, line);
+                cout << line << endl;
+            }
+        
+            rulesfile.close();
+        }
+    
+        else
+        {
+            cout << "Unable to open file" << endl;
+        }
+        
     
 
     Guessing_game game;
