@@ -18,7 +18,7 @@ class Target{
     int val;
     
 public:
-    //Assign target val either random numer or injected number
+    //Assign target val either random number or injected number
     Target()
     {
         val = generate_target();
@@ -44,7 +44,38 @@ public:
     
     
     
+    
     //Compare target val to guess
+    bool compareGuess(int guess){
+        bool won;
+        if(this->isSame(guess))
+        {
+            cout << "You win!" << endl;
+            won = true;
+        }
+        
+        else if(this->isHigher(guess))
+        {
+            cout << "Your guess is too high!" << endl;
+            won = false;
+        }
+        
+        else if (this->isLower(guess))
+        {
+            cout << "Your guess is too low!" << endl;
+            won = false;
+        }
+        
+        else
+        {
+            cout << "Error" << endl;
+            won = false;
+        }
+        
+        return won;
+    }
+    
+    
     bool isSame(int guess)
     {
         
@@ -72,34 +103,25 @@ public:
     void play(){
         int guess;
         bool keepPlaying = true;
+        bool won = false;
+        
+        
         while(keepPlaying){
             
             //Retrieve guesses until all guesses are used and compare to target
-            Target target;           //Target initialization moved inside of keep playing loop to get a new target every playthrough
+            Target target;          
             for(int turn_number = 1; turn_number <= max_turns; turn_number++)
             {
                 guess = retrieve_guess(turn_number);
-                if(target.isSame(guess))
-                {
-                    cout << "You win!" << endl;
+                
+                //Decide if that was a winning guess
+                won = target.compareGuess(guess);
+                if (won){
                     break;
                 }
-                
-                else if(target.isHigher(guess))
-                {
-                    cout << "Your guess is too high!" << endl;
-                }
-                
-                else if (target.isLower(guess))
-                {
-                    cout << "Your guess is too low!" << endl;
-                }
-                
-                else
-                {
-                    cout << "Error" << endl;
-                }
             }
+            
+            
         cout << "The number was ";
         target.display();
         cout << endl << "End Game" << endl;
@@ -107,36 +129,21 @@ public:
         }
     }
     
+    
+    
     //Deal with commandline flags
     void flags(string flag){
         if (flag.compare(rules_flag) == 0){
-            string line;
-            ifstream rulesfile;
-            rulesfile.open("rules.txt");
-            if(rulesfile.is_open())
-            {
-                while(rulesfile.good())
-                {
-                    getline(rulesfile, line);
-                    cout << line << endl;
-                }
-                
-                rulesfile.close();
-            }
-            
-            else
-            {
-                cout << "Unable to open file" << endl;
-            }
+            rulesRead();
         }
-        
+                    
         else {
             cout << "Invalid flag" << endl;
         }
-        
-        
     }
  
+    
+    
 private:
     int retrieve_guess(int turn_number){
         int guess;
@@ -180,6 +187,28 @@ private:
         return keepPlaying;
     }
     
+    //Open and read the rules file
+    void rulesRead(){
+        string line;
+        ifstream rulesfile;
+        rulesfile.open("rules.txt");
+        if(rulesfile.is_open())
+        {
+            while(rulesfile.good())
+            {
+                getline(rulesfile, line);
+                cout << line << endl;
+            }
+            
+            rulesfile.close();
+        }
+        
+        else
+        {
+            cout << "Unable to open file" << endl;
+        }
+
+    }
     
 };
 
@@ -193,7 +222,7 @@ int main(int argc, const char * argv[])
     Guessing_game game;
     
 
-    
+    //Decide what, if anything, is being displayed before the game begins
     switch (argc) {
           
         //Regular game run
@@ -214,13 +243,6 @@ int main(int argc, const char * argv[])
     }
             
     
-    
-    
-    
-    
-        
-    
-
     
     game.play();    //Start the game
     return 0;
