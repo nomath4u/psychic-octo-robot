@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <fstream>
 #include <string>
+#include <sstream>
+
 
 using namespace std;
 
@@ -97,12 +99,14 @@ public:
 
 class Guessing_game{
     const int max_turns = 5;
+    const int statistics_number = 4; // Change this as different statistics are added
     const string rules_flag = ("-r");
     const string statistics_flag = ("-s");
     
 public:
     void play(){
         int guess;
+        int turn_number;
         bool keepPlaying = true;
         bool won = false;
         
@@ -111,7 +115,7 @@ public:
             
             //Retrieve guesses until all guesses are used and compare to target
             Target target;          
-            for(int turn_number = 1; turn_number <= max_turns; turn_number++)
+            for(turn_number = 1; turn_number <= max_turns; turn_number++)
             {
                 guess = retrieve_guess(turn_number);
                 
@@ -126,6 +130,7 @@ public:
         cout << "The number was ";
         target.display();
         cout << endl << "End Game" << endl;
+        this->statisticsEdit(won, turn_number);
         keepPlaying = play_again();
         }
     }
@@ -147,15 +152,20 @@ public:
     }
     
     void statsCheck (){
+        int played = 0;
+        int wins = 0;
+        int losses = 0;
+        double average = 0;
         ifstream statisticsfile;
         statisticsfile.open("stats.txt");
         if(statisticsfile.good()){
         }
         else{
-            generateStatsFile();
+            generateStatsFile(wins, losses, average, played);
             cout << "stats.txt generated" << endl;
         }
     }
+
 
  
     
@@ -244,15 +254,83 @@ private:
         else
         {
             cout << "Unable to find stats.txt. Generating new" << endl;
-            generateStatsFile();
+            statsCheck();
             
         }
     }
     
-    void generateStatsFile(){
+    void statisticsEdit(bool won, int turns_taken){   
+        string line;
+        fstream statisticsfile;
+        int total_played_old;
+        int total_played_new;
+        int wins_stat_old;
+        int wins_stat_new;
+        int losses_stat_old;
+        int losses_stat_new;
+        string float_string;
+        double avg_turns_old;
+        double avg_turns_new;
+        string trash;
+        stringstream *ss;
+        
+        // correct for loop incrementation without a break;
+        if(turns_taken == 6){
+            turns_taken = 5;
+        }
+        
+        
+        statisticsfile.open("stats.txt");
+        if(statisticsfile.is_open()){
+            for(int statistics_index = 1; statistics_index <= (1 + statistics_number); statistics_index++){ //The 1 is to counter the first line that doesn't have statistics
+                getline(statisticsfile, line);
+                switch(statistics_index){
+                    case(2):
+                        ss = new stringstream(line);
+                        *ss >> trash >>trash >> trash >> total_played_old;
+                        total_played_new = total_played_old + 1;
+                    case(3):
+                        ss = new stringstream(line);
+                        *ss >> trash >> wins_stat_old;
+                        if(won){
+                            wins_stat_new = wins_stat_old + 1;
+                        }
+                        else{
+                            wins_stat_new = wins_stat_old;
+                        }
+                        break;
+                        
+                    case(4):
+                        ss = new stringstream(line);
+                        *ss >> trash >> losses_stat_old;
+                        if(!won){
+                            losses_stat_new = losses_stat_old + 1;
+                        }
+                        else{
+                            losses_stat_new = losses_stat_old;
+                        }
+                        break;
+                    case(5):
+                        ss = new stringstream(line);
+                        *ss >> trash >> trash >> trash >> trash >> float_string;
+                        avg_turns_old = atof(float_string.c_str());
+                        avg_turns_new = (((avg_turns_old * (double) total_played_old) + (double)turns_taken) / (double) total_played_new);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        statisticsfile.close();
+        generateStatsFile(wins_stat_new, losses_stat_new, avg_turns_new, total_played_new);
+    }
+    
+    
+
+    void generateStatsFile(int wins, int losses, double average, int played){
         ofstream statisticsfile;
         statisticsfile.open("stats.txt");
-        statisticsfile << "Statistics:" <<endl << "Wins: " << endl << "Losses: " << endl << "Average turns per game: " << endl;
+        statisticsfile << "Statistics:" <<endl << "Total Games Played: " << played << endl << "Wins: " << wins << endl << "Losses: " << losses << endl << "Average turns per game: " << average << endl;
         statisticsfile.close();
     }
     
@@ -291,8 +369,7 @@ int main(int argc, const char * argv[])
     
     //Generate statistics file if it doens't exist
     game.statsCheck();
-            
-    
+        
     
     game.play();    //Start the game
     return 0;
