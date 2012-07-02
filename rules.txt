@@ -1,3 +1,10 @@
+Help:
+
+Flags:
+-h shows this file (you probably already knew that if you got here)
+-d will delete your statistics file, a new one will be generated immediately afterwards
+-s show your statistics
+
 The Rules:
 The computer will generate an interger between 0 and 100.
 You will have 5 guesses to get the correct answer.

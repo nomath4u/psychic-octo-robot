@@ -92,8 +92,12 @@ public:
 class Guessing_Game{
     const int max_turns = 5;
     const int statistics_number = 4; // Change this as different statistics are added
-    const string rules_flag = "-r";
+    const int min_number = 0;
+    const int max_number = 100;
+    const string rules_flag = "-h";
     const string statistics_flag = "-s";
+    const string remove_flag = "-d";
+    
     
 public:
     
@@ -145,6 +149,10 @@ public:
         else if (flag.compare(statistics_flag) == 0){
             statisticsRead();
         }
+        
+        else if (flag.compare(remove_flag) == 0){
+            removeStats();
+        }
         else {
             cout << "Invalid flag" << endl;
         }
@@ -171,13 +179,48 @@ public:
     
 private:
     int retrieveGuess(int turn_number){
-        int guess;
+        string guess;
+        int guess_int;
+        bool pass_check = false;
         cout << "Enter your guess. This is turn number " << turn_number << endl;
-        cin >> guess;
-        return guess;
+        while(!pass_check){
+            cin >> guess;
+            if(guessCheck(guess)){
+                guess_int = atoi(guess.c_str());
+                //Make sure the interger is within the range
+                if(guess_int < min_number || guess_int > max_number){
+                    cout << "Number is not in range. Guess again." << endl;
+                    pass_check = false;
+                }
+                else{
+                    pass_check = true;
+                }
+            }
+            else{
+                cout << "That is not a valid entry, Please guess again" << endl;
+                pass_check = false;
+            }
+        }
+        return guess_int;
         
     }
     
+    //Make sure that the guess is an interger
+    bool guessCheck(string guess){
+        int digit_check_index = 0;
+        bool pass_check = true;  
+        //Check that every character in the string is a digit and fail the check if one isn't
+        while (digit_check_index < guess.length()){
+            
+            if (isdigit(guess[digit_check_index]) == 0){
+                pass_check = false;
+            }
+
+            digit_check_index++;
+        }
+        
+        return pass_check;
+    }
     
     //Prompt user for playing again
     bool playAgain(){
@@ -311,7 +354,10 @@ private:
         statisticsfile.close();
     }
     
-        
+    void removeStats(){
+        cout << "Removing statistics" << endl;
+        remove("stats.txt");
+    }
 };
 
 
