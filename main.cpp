@@ -21,20 +21,19 @@ class Target{
     
 public:
     //Assign target val either random number or injected number
-    Target()
-    {
-        val = generate_target();
+    Target(){
+    
+        val = generateTarget();
         
     }
     
-    Target(int targetValue)
-    {
+    Target(int targetValue){
         val = targetValue;
     }
     
     
     //Generate random number 0 - 100
-    int generate_target(){
+    int generateTarget(){
         srand( (unsigned int)time(NULL) );
         int target = (rand() % 101);
         return target;
@@ -50,26 +49,22 @@ public:
     //Compare target val to guess
     bool compareGuess(int guess){
         bool won;
-        if(this->isSame(guess))
-        {
+        if(this->isSame(guess)){
             cout << "You win!" << endl;
             won = true;
         }
         
-        else if(this->isHigher(guess))
-        {
+        else if(this->isHigher(guess)){
             cout << "Your guess is too high!" << endl;
             won = false;
         }
         
-        else if (this->isLower(guess))
-        {
+        else if (this->isLower(guess)){
             cout << "Your guess is too low!" << endl;
             won = false;
         }
         
-        else
-        {
+        else{
             cout << "Error" << endl;
             won = false;
         }
@@ -78,32 +73,37 @@ public:
     }
     
     
-    bool isSame(int guess)
-    {
+    bool isSame(int guess){
         
         return (guess == val);
     }
     
-    bool isHigher(int guess)
-    {
+    bool isHigher(int guess){
         return (guess > val);
     }
     
-    bool isLower(int guess)
-    {
+    bool isLower(int guess){
         return (guess < val);
     }
     
 };
 
 
-class Guessing_game{
+class Guessing_Game{
     const int max_turns = 5;
     const int statistics_number = 4; // Change this as different statistics are added
-    const string rules_flag = ("-r");
-    const string statistics_flag = ("-s");
+    const string rules_flag = "-r";
+    const string statistics_flag = "-s";
     
 public:
+    
+    enum Constants{
+        TOTAL_PLAYED_LINE = 2,
+        WIN_LINE = 3,
+        LOSE_LINE = 4,
+        AVG_TURNS_LINE = 5
+    };
+    
     void play(){
         int guess;
         int turn_number;
@@ -115,9 +115,8 @@ public:
             
             //Retrieve guesses until all guesses are used and compare to target
             Target target;          
-            for(turn_number = 1; turn_number <= max_turns; turn_number++)
-            {
-                guess = retrieve_guess(turn_number);
+            for(turn_number = 1; turn_number <= max_turns; turn_number++){
+                guess = retrieveGuess(turn_number);
                 
                 //Decide if that was a winning guess
                 won = target.compareGuess(guess);
@@ -130,8 +129,8 @@ public:
         cout << "The number was ";
         target.display();
         cout << endl << "End Game" << endl;
-        this->statisticsEdit(won, turn_number);
-        keepPlaying = play_again();
+        statisticsEdit(won, turn_number);
+        keepPlaying = playAgain();
         }
     }
     
@@ -171,7 +170,7 @@ public:
     
     
 private:
-    int retrieve_guess(int turn_number){
+    int retrieveGuess(int turn_number){
         int guess;
         cout << "Enter your guess. This is turn number " << turn_number << endl;
         cin >> guess;
@@ -181,33 +180,28 @@ private:
     
     
     //Prompt user for playing again
-    bool play_again()
-    {
+    bool playAgain(){
         bool choiceFail = true;
         char selection;
         bool keepPlaying;
-        while(choiceFail)
-        {
+        while(choiceFail){
             cout << "Would you like to continue playing? (y/n)" << endl;
             cin >> selection;
-            if(selection != 'Y' && selection != 'y' && selection != 'N' && selection != 'n')
-            {
+            if(selection != 'Y' && selection != 'y' && selection != 'N' && selection != 'n'){
                 cout << "Invalid selection" << endl;
             }
             
-            else
-            {
+            else{
                 choiceFail = false;
             }
         }
         
-        if(selection == 'Y' || selection == 'y')
-        {
+        if(selection == 'Y' || selection == 'y'){
+            
             keepPlaying = true;
         }
         
-        else if(selection == 'N' || selection == 'n')
-        {
+        else if(selection == 'N' || selection == 'n'){
             keepPlaying = false;
         }
         return keepPlaying;
@@ -218,10 +212,8 @@ private:
         string line;
         ifstream rulesfile;
         rulesfile.open("rules.txt");
-        if(rulesfile.is_open())
-        {
-            while(rulesfile.good())
-            {
+        if(rulesfile.is_open()){
+            while(rulesfile.good()){
                 getline(rulesfile, line);
                 cout << line << endl;
             }
@@ -229,8 +221,8 @@ private:
             rulesfile.close();
         }
         
-        else
-        {
+        else{
+            
             cout << "Unable to open file" << endl;
         }
 
@@ -240,10 +232,8 @@ private:
         string line;
         ifstream statisticsfile;
         statisticsfile.open("stats.txt");
-        if(statisticsfile.is_open())
-        {
-            while(statisticsfile.good())
-            {
+        if(statisticsfile.is_open()){
+            while(statisticsfile.good()){
                 getline(statisticsfile, line);
                 cout << line << endl;
             }
@@ -251,8 +241,8 @@ private:
             statisticsfile.close();
         }
         
-        else
-        {
+        else{
+            
             cout << "Unable to find stats.txt. Generating new" << endl;
             statsCheck();
             
@@ -284,36 +274,23 @@ private:
         if(statisticsfile.is_open()){
             for(int statistics_index = 1; statistics_index <= (1 + statistics_number); statistics_index++){ //The 1 is to counter the first line that doesn't have statistics
                 getline(statisticsfile, line);
+                ss = new stringstream(line);
                 switch(statistics_index){
-                    case(2):
-                        ss = new stringstream(line);
+                    case(TOTAL_PLAYED_LINE):
                         *ss >> trash >>trash >> trash >> total_played_old;
-                        total_played_new = total_played_old + 1;
-                    case(3):
-                        ss = new stringstream(line);
+                        total_played_new = total_played_old + 1;  //Always increases
+                    case(WIN_LINE):
                         *ss >> trash >> wins_stat_old;
-                        if(won){
-                            wins_stat_new = wins_stat_old + 1;
-                        }
-                        else{
-                            wins_stat_new = wins_stat_old;
-                        }
+                        wins_stat_new = (won ? wins_stat_old + 1 : wins_stat_old);  //Only increases if you win
                         break;
                         
-                    case(4):
-                        ss = new stringstream(line);
+                    case(LOSE_LINE):
                         *ss >> trash >> losses_stat_old;
-                        if(!won){
-                            losses_stat_new = losses_stat_old + 1;
-                        }
-                        else{
-                            losses_stat_new = losses_stat_old;
-                        }
+                        losses_stat_new = (!won ? losses_stat_old + 1 : losses_stat_old); // Only increases if you lose
                         break;
-                    case(5):
-                        ss = new stringstream(line);
+                    case(AVG_TURNS_LINE):
                         *ss >> trash >> trash >> trash >> trash >> float_string;
-                        avg_turns_old = atof(float_string.c_str());
+                        avg_turns_old = atof(float_string.c_str()); 
                         avg_turns_new = (((avg_turns_old * (double) total_played_old) + (double)turns_taken) / (double) total_played_new);
                         break;
                     default:
@@ -342,29 +319,29 @@ private:
 
 
 
-int main(int argc, const char * argv[])
-{
-    Guessing_game game;
+int main(int argc, const char * argv[]){
+    
+    Guessing_Game game;
     
 
     //Decide what, if anything, is being displayed before the game begins
     switch (argc) {
           
         //Regular game run
-        case 1: {
+        case 1:
             break;
-        }
+        
         
         // Decide which flag was given
-        case 2: {
+        case 2:
             game.flags(argv[1]);
             break;
-        }
+        
         
         // Too many flags
-        default:{
+        default:
             cout << "Too many arguements" << endl;
-        }
+        
     }
     
     //Generate statistics file if it doens't exist
